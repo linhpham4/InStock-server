@@ -4,12 +4,12 @@ import initKnex from "knex";
 import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
 
-router.delete("/warehouse/:warehouseId", async (req, res) => {
+router.delete("/warehouses/:warehouseId", async (req, res) => {
   const id = req.params.warehouseId;
   try {
     const selectedItem = await knex("warehouses").where("id", id).del();
 
-    res.status(200).json("Item deleted: ", selectedItem);
+    res.status(200).json(selectedItem);
   } catch (error) {
     console.error(error);
     res.status(404).json("Warehouse not found");
