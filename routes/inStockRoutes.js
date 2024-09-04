@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import fs from "fs";
+import * as userController from "../controllers/user-controller.js";
 
 
 export default router;
