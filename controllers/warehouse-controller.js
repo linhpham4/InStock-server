@@ -5,6 +5,28 @@ import validator from "validator";
 
 const knex = initKnex(configuration);
 
+// Get all warehouses
+const getWarehouses = async (_req, res) => {
+    try {
+        const data = await knex
+            .select(
+                'id', 
+                'warehouse_name', 
+                'address', 
+                'city', 
+                'country', 
+                'contact_name', 
+                'contact_position', 
+                'contact_phone', 
+                'contact_email'
+                )
+            .from('warehouses')
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(400).send(`Error retrieving warehouses: ${error}`)
+    }
+}
+
 const remove = async (req, res) => {
   const id = req.params.warehouseId;
 
@@ -109,4 +131,6 @@ const update = async (req, res) => {
 
 
 
-export { remove, addNew, update };
+
+export { remove, addNew, getWarehouses };
+
