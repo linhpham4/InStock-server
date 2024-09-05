@@ -26,17 +26,19 @@ const remove = async (req, res) => {
 const addNew = async (req, res) => {
     const { warehouse_name, address, city, country, contact_name, contact_position, contact_phone, contact_email } = req.body;
 
+
+    //Not at all sure if this will work
     if (
-      !warehouse_name 
-      || !address 
-      || !city 
-      || !country 
-      || !contact_name 
-      || !contact_position
+        !warehouse_name || 
+        !address || 
+        !city || 
+        !country || 
+        !contact_name || 
+        !contact_position
     ) {
-        return res.status(400).json({ message: 'please fill out all fields' });
+        return res.status(400).json({ message: 'Please fill out all fields' });
     }
-  }
+
     if (!validator.isMobilePhone(contact_phone, 'any', { strictMode: false })) {
         return res.status(400).json({ message: 'Invalid phone number' });
     }
@@ -57,13 +59,14 @@ const addNew = async (req, res) => {
                 contact_phone,
                 contact_email
             })
-            .returning('*');
+            .returning('*'); 
 
         res.status(201).json(newWarehouse);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: `Unable to create new warehouse: ${error.message}` });
     }
+};
 
 
 
