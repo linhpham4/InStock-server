@@ -14,7 +14,7 @@ router.route("/warehouses/:warehouseId").delete(warehouseController.remove);
 
 router.route('/warehouses').post(warehouseController.addNew);
 
-router.route("/:id").get(warehouseController.findWarehouse).patch(warehouseController.update);
+router.route("/warehouses/:warehouseId").get(warehouseController.findWarehouse).patch(warehouseController.update);
 
 
 
