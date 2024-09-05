@@ -8,7 +8,6 @@ const getSingleInventory = async (req,res) => {
     try {
         const id  = parseInt(req.params.itemId)
 
-        console.log(typeof(id))
         const inventorySingle = await knex('inventories')
         .join('warehouses', 'inventories.warehouse_id', '=', 'warehouses.id')
         .where({ 'inventories.id':id })
