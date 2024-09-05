@@ -100,7 +100,7 @@ const update = async (req, res) => {
     res.json(updatedwarehouse[0]);
   } catch (error) {
     res.status(500).json({
-      message: `Unable to update warehouse with ID ${req.params.id}: ${error}` 
+      message: `Unable to update warehouse with ID ${req.params.warehouseId }: ${error}` 
     });
   }
 };
