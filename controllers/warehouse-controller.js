@@ -72,13 +72,25 @@ const addNew = async (req, res) => {
 const findWarehouse = async (req, res) => {
     try {
         const id = req.params.warehouseId;
-        const foundWarehouse = await knex("warehouses").where({ id });
+        const foundWarehouse = await knex("warehouses")
+            .where({ id })
+            .select(
+                "id",
+                "warehouse_name",
+                "address",
+                "city",
+                "country",
+                "contact_name",
+                "contact_position",
+                "contact_phone",
+                "contact_email"
+        );
 
         if (foundWarehouse.length === 0) {
             return res.status(404).json(`Warehouse with ID ${id} not found`);
         }
 
-        const warehouseData = foundWarehouse[0];
+        const warehouseData = foundWarehouse[0]
         res.status(200).json(warehouseData);
 
     } catch (error) {
