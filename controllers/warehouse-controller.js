@@ -83,18 +83,18 @@ const update = async (req, res) => {
 
   try {
     const rowsUpdated = await knex("warehouses")
-      .where({ id: req.params.id })
+      .where({ id: req.params.warehouseId  })
       .update(updateFields);
 
     if (rowsUpdated === 0) {
       return res.status(404).json({
-        message: `warehouse with ID ${req.params.id} not found` 
+        message: `warehouse with ID ${req.params.warehouseId } not found` 
       });
     }
 
     const updatedwarehouse = await knex("warehouses")
       .where({
-        id: req.params.id,
+        id: req.params.warehouseId,
       });
     
     res.json(updatedwarehouse[0]);
