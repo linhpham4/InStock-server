@@ -8,7 +8,6 @@ import * as warehouseController from "../controllers/warehouse-controller.js";
 
 const router = express.Router();
 
-
 router
     .route("/warehouses/:warehouseId")
     .delete(warehouseController.remove);
