@@ -4,13 +4,16 @@ import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
 
 const getSingleInventory = async (req,res) => {
-    const id  = req.params.itemId
-    console.log(id)
 
     try {
+        const id  = parseInt(req.params.itemId)
+
+        console.log(typeof(id))
         const inventorySingle = await knex('inventories')
+        .join('warehouses', 'inventories.warehouse_id', '=', 'warehouses.id')
+        .where({ 'inventories.id':id })
         .select(
-            'id',
+            'inventories.id',
             'warehouse_name',
             'item_name',
             'description',
@@ -18,7 +21,7 @@ const getSingleInventory = async (req,res) => {
             'status',
             'quantity'
         )
-        .where({id:id})
+
 
     res.status(200).json(inventorySingle) 
     } catch (error) {
