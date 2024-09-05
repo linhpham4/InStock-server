@@ -1,7 +1,6 @@
 import initKnex from "knex";
 import configuration from "../knexfile.js";
 import validator from "validator";
-import { v4 as uuidv4 } from 'uuid';
 
 
 const knex = initKnex(configuration);
@@ -28,6 +27,7 @@ const getWarehouses = async (_req, res) => {
     }
 }
 
+// Delete a warehouse
 const remove = async (req, res) => {
   const id = req.params.warehouseId;
 
@@ -49,7 +49,6 @@ const addNew = async (req, res) => {
     const { warehouse_name, address, city, country, contact_name, contact_position, contact_phone, contact_email } = req.body;
 
 
-    //Not at all sure if this will work
     if (
         !warehouse_name || 
         !address || 
@@ -90,6 +89,74 @@ const addNew = async (req, res) => {
     }
 };
 
+// Get a single warehouse
+const findWarehouse = async (req, res) => {
+    try {
+        const id = req.params.warehouseId;
+        const foundWarehouse = await knex("warehouses")
+            .where({ id })
+            .select(
+                "id",
+                "warehouse_name",
+                "address",
+                "city",
+                "country",
+                "contact_name",
+                "contact_position",
+                "contact_phone",
+                "contact_email"
+        );
+
+        if (foundWarehouse.length === 0) {
+            return res.status(404).json(`Warehouse with ID ${id} not found`);
+        }
+
+        const warehouseData = foundWarehouse[0]
+        res.status(200).json(warehouseData);
+
+    } catch (error) {
+        res.status(500).json(`${error}`);
+    }
+}
+
+// Update information for a warehouse
+const update = async (req, res) => {
+    const { warehouse_name, address, city, country, contact_name, contact_position, contact_phone, contact_email } = req.body;
+
+    const updateFields = {
+        warehouse_name,
+        address,
+        city,
+        country,
+        contact_name,
+        contact_position,
+        contact_phone,
+        contact_email
+    };
+
+  try {
+    const rowsUpdated = await knex("warehouses")
+      .where({ id: req.params.warehouseId  })
+      .update(updateFields);
+
+    if (rowsUpdated === 0) {
+      return res.status(404).json({
+        message: `warehouse with ID ${req.params.warehouseId } not found` 
+      });
+    }
+
+    const updatedwarehouse = await knex("warehouses")
+      .where({
+        id: req.params.warehouseId,
+      });
+    
+    res.json(updatedwarehouse[0]);
+  } catch (error) {
+    res.status(500).json({
+      message: `Unable to update warehouse with ID ${req.params.warehouseId }: ${error}` 
+    });
+  }
+};
 
 
-export { remove, addNew, getWarehouses };
+export { remove, addNew, findWarehouse, getWarehouses, update};
