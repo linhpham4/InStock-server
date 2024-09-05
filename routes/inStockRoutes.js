@@ -8,10 +8,14 @@ import * as inventoryController from "../controllers/inventory-controller.js";
 
 const router = express.Router();
 
+
 // Warehouse routes
 router
     .route("/warehouses/:warehouseId")
-    .delete(warehouseController.remove);
+    .delete(warehouseController.remove)
+    .get(warehouseController.findWarehouse)
+    .patch(warehouseController.update);
+
 
 router
     .route('/warehouses')
