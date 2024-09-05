@@ -68,6 +68,22 @@ const addNew = async (req, res) => {
     }
 };
 
+//get request for a single warehouse
+const findWarehouse = async (req, res) => {
+    try {
+        const id = req.params.warehouseId;
+        const foundWarehouse = await knex("warehouses").where({ id });
 
+        if (foundWarehouse.length === 0) {
+            return res.status(404).json(`Warehouse with ID ${id} not found`);
+        }
 
-export { remove, addNew };
+        const warehouseData = foundWarehouse[0];
+        res.status(200).json(warehouseData);
+
+    } catch (error) {
+        res.status(500).json(`${error}`);
+    }
+}
+
+export { remove, addNew, findWarehouse };
