@@ -4,7 +4,7 @@ import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
 
 import * as warehouseController from "../controllers/warehouse-controller.js";
-
+import * as inventoryController from "../controllers/inventory-controller.js";
 
 const router = express.Router();
 
@@ -17,5 +17,6 @@ router
     .get(warehouseController.getWarehouses)
     .post(warehouseController.addNew);
 
+router.route("/inventories").get(inventoryController.getAll);
 
 export default router;
