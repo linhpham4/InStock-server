@@ -26,4 +26,6 @@ const getAll = async (req, res) => {
   }
 };
 
-export { getAll };
+
+
+export { getAll};

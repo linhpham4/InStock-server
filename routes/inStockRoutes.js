@@ -8,10 +8,20 @@ import * as inventoryController from "../controllers/inventory-controller.js";
 
 const router = express.Router();
 
-router.route("/warehouses/:warehouseId").delete(warehouseController.remove);
+// Warehouse routes
+router
+    .route("/warehouses/:warehouseId")
+    .delete(warehouseController.remove);
 
-router.route("/warehouses").post(warehouseController.addNew);
+router
+    .route('/warehouses')
+    .get(warehouseController.getWarehouses)
+    .post(warehouseController.addNew);
 
-router.route("/inventories").get(inventoryController.getAll);
+// Inventory routes
+router
+    .route("/inventories")
+    .get(inventoryController.getAll)
+
 
 export default router;
