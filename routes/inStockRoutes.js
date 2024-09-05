@@ -23,5 +23,9 @@ router
     .route("/inventories")
     .get(inventoryController.getAll)
 
+router
+    .route("/inventories/:itemId")
+    .get(inventoryController.getSingleInventory)
+
 
 export default router;
