@@ -1,7 +1,6 @@
 import initKnex from "knex";
 import configuration from "../knexfile.js";
 import validator from "validator";
-import { v4 as uuidv4 } from 'uuid';
 
 
 const knex = initKnex(configuration);
@@ -27,7 +26,6 @@ const addNew = async (req, res) => {
     const { warehouse_name, address, city, country, contact_name, contact_position, contact_phone, contact_email } = req.body;
 
 
-    //Not at all sure if this will work
     if (
         !warehouse_name || 
         !address || 
@@ -69,5 +67,46 @@ const addNew = async (req, res) => {
 };
 
 
+const update = async (req, res) => {
+    const { warehouse_name, address, city, country, contact_name, contact_position, contact_phone, contact_email } = req.body;
 
-export { remove, addNew };
+    const updateFields = {
+        warehouse_name,
+        address,
+        city,
+        country,
+        contact_name,
+        contact_position,
+        contact_phone,
+        contact_email
+    };
+
+  try {
+    const rowsUpdated = await knex("warehouses")
+      .where({ id: req.params.id })
+      .update(updateFields);
+
+    if (rowsUpdated === 0) {
+      return res.status(404).json({
+        message: `warehouse with ID ${req.params.id} not found` 
+      });
+    }
+
+    const updatedwarehouse = await knex("warehouses")
+      .where({
+        id: req.params.id,
+      });
+    
+    res.json(updatedwarehouse[0]);
+  } catch (error) {
+    res.status(500).json({
+      message: `Unable to update warehouse with ID ${req.params.id}: ${error}` 
+    });
+  }
+};
+
+
+
+
+
+export { remove, addNew, update };
