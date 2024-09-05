@@ -1,19 +1,8 @@
 import express from "express";
+import * as warehouseController from "../controllers/warehouse-controller.js";
+
 const router = express.Router();
-import initKnex from "knex";
-import configuration from "../knexfile.js";
-const knex = initKnex(configuration);
 
-router.delete("/warehouses/:warehouseId", async (req, res) => {
-  const id = req.params.warehouseId;
-  try {
-    const selectedItem = await knex("warehouses").where("id", id).del();
-
-    res.status(200).json(selectedItem);
-  } catch (error) {
-    console.error(error);
-    res.status(404).json("Warehouse not found");
-  }
-});
+router.route("/warehouses/:warehouseId").delete(warehouseController.remove);
 
 export default router;
