@@ -1,5 +1,8 @@
 import initKnex from "knex";
 import configuration from "../knexfile.js";
+import validator from "validator";
+import { v4 as uuidv4 } from 'uuid';
+
 
 const knex = initKnex(configuration);
 
@@ -19,4 +22,49 @@ const remove = async (req, res) => {
   }
 };
 
-export { remove };
+
+const addNew = async (req, res) => {
+    const { warehouse_name, address, city, country, contact_name, contact_position, contact_phone, contact_email } = req.body;
+
+    if (
+      !warehouse_name 
+      || !address 
+      || !city 
+      || !country 
+      || !contact_name 
+      || !contact_position
+    ) {
+        return res.status(400).json({ message: 'please fill out all fields' });
+    }
+  }
+    if (!validator.isMobilePhone(contact_phone, 'any', { strictMode: false })) {
+        return res.status(400).json({ message: 'Invalid phone number' });
+    }
+
+    if (!validator.isEmail(contact_email)) {
+        return res.status(400).json({ message: 'Invalid email address' });
+    }
+
+    try {
+        const [newWarehouse] = await knex('warehouses')
+            .insert({
+                warehouse_name,
+                address,
+                city,
+                country,
+                contact_name,
+                contact_position,
+                contact_phone,
+                contact_email
+            })
+            .returning('*');
+
+        res.status(201).json(newWarehouse);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: `Unable to create new warehouse: ${error.message}` });
+    }
+
+
+
+export { remove, addNew };
