@@ -28,6 +28,11 @@ const getAll = async (req, res) => {
 
 const addNewItem = async (req, res) => {
   try {
+    // checks that request contains all required data
+    if (!req.body.warehouse_id || !req.body.item_name || !req.body.description || !req.body.category || !req.body.status || !req.body.quantity) {
+      return res.status(400).json("Please provide all required item information");
+    };
+    
     const updatedInventory = await knex("inventories").insert(req.body);
     const newItemId = updatedInventory[0];
     const newItem = await knex("inventories")
