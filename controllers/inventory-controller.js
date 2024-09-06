@@ -7,13 +7,15 @@ const removeSingleInventory = async (req, res) => {
   const id = req.params.itemId;
 
   try {
-    const inventoryItem = await knex("warehouses")
+    const inventoryItem = await knex("inventories")
       .where({ id });
     if (inventoryItem.length === 0) {
       res.status(404).json("Inventory item not found");
       return;
     }
-    inventoryItem.del();
+    await knex('inventories')
+      .where({ id })
+      .del();
     res.status(200).json(inventoryItem);
   } catch (error) {
     console.error(error);
@@ -24,7 +26,7 @@ const removeSingleInventory = async (req, res) => {
 const getSingleInventory = async (req,res) => {
 
     try {
-        const id  = parseInt(req.params.itemId)
+        const id  = req.params.itemId
 
         const inventorySingle = await knex('inventories')
         .join('warehouses', 'inventories.warehouse_id', '=', 'warehouses.id')
