@@ -21,7 +21,10 @@ router
   .post(warehouseController.addNew);
 
 // Inventory routes
-router.route("/inventories").get(inventoryController.getAll);
+router
+    .route("/inventories")
+    .get(inventoryController.getAll)
+    .post(inventoryController.addNewItem);
 
 router
     .route("/inventories/:itemId")
