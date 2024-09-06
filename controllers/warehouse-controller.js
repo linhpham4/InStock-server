@@ -37,7 +37,7 @@ const remove = async (req, res) => {
       res.status(404).json("Warehouse not found");
     }
     await knex("warehouses").where({ id }).del();
-    res.status(200).json(warehouseDeleted);
+    res.status(200).end()
   } catch (error) {
     console.error(error);
     res.status(500).json(`Unsuccessful: ${error}`);
