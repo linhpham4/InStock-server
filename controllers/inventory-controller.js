@@ -6,7 +6,7 @@ const knex = initKnex(configuration);
 const getSingleInventory = async (req,res) => {
 
     try {
-        const id  = parseInt(req.params.itemId)
+        const id  = req.params.itemId
 
         const inventorySingle = await knex('inventories')
         .join('warehouses', 'inventories.warehouse_id', '=', 'warehouses.id')
