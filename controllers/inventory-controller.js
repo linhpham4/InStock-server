@@ -32,6 +32,12 @@ const addNewItem = async (req, res) => {
     if (!req.body.warehouse_id || !req.body.item_name || !req.body.description || !req.body.category || !req.body.status || !req.body.quantity) {
       return res.status(400).json("Please provide all required item information");
     };
+
+    // checks if a warehouse in the warehouses table has an id matching warehouse_id from the request
+    const warehouses = await knex("warehouses");
+    if (!warehouses.find((warehouse) => warehouse.id === req.body.warehouse_id)) {
+      return res.status(400).json(`Warehouse with ID ${req.body.warehouse_id} cannot be found`);
+    };
     
     const updatedInventory = await knex("inventories").insert(req.body);
     const newItemId = updatedInventory[0];
