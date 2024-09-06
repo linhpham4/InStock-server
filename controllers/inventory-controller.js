@@ -3,6 +3,24 @@ import configuration from "../knexfile.js";
 
 const knex = initKnex(configuration);
 
+const removeSingleInventory = async (req, res) => {
+  const id = req.params.itemId;
+
+  try {
+    const inventoryItem = await knex("warehouses")
+      .where({ id });
+    if (inventoryItem.length === 0) {
+      res.status(404).json("Inventory item not found");
+      return;
+    }
+    inventoryItem.del();
+    res.status(200).json(inventoryItem);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(`Bad request. ${error}`);
+  }
+};
+
 const getSingleInventory = async (req,res) => {
 
     try {
@@ -28,6 +46,7 @@ const getSingleInventory = async (req,res) => {
     }
 }
 
+// Get all inventory
 const getAll = async (req, res) => {
   try {
     const inventory = await knex("inventories")
@@ -51,6 +70,7 @@ const getAll = async (req, res) => {
   }
 };
 
+// Edit/update an existing resource in its entirety (PUT)
 const edit = async (req, res) => {
   const id = req.params.itemId;
   const request = req.body;
@@ -80,4 +100,4 @@ const edit = async (req, res) => {
   }
 };
 
-export { getAll, getSingleInventory, edit};
+export { getAll, getSingleInventory, edit, removeSingleInventory};
