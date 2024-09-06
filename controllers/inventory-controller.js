@@ -26,17 +26,23 @@ const getAll = async (req, res) => {
   }
 };
 
+// Create new inventory item
 const addNewItem = async (req, res) => {
   try {
     // checks that request contains all required data
     if (!req.body.warehouse_id || !req.body.item_name || !req.body.description || !req.body.category || !req.body.status || !req.body.quantity) {
       return res.status(400).json("Please provide all required item information");
     };
-
+    
     // checks if a warehouse in the warehouses table has an id matching warehouse_id from the request
     const warehouses = await knex("warehouses");
     if (!warehouses.find((warehouse) => warehouse.id === req.body.warehouse_id)) {
       return res.status(400).json(`Warehouse with ID ${req.body.warehouse_id} cannot be found`);
+    };
+
+    // checks if the value of "quantity" is a number
+    if (typeof req.body.quantity !== "number") {
+      return res.status(400).json("Quantity must be a number");
     };
     
     const updatedInventory = await knex("inventories").insert(req.body);
