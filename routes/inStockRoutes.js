@@ -10,6 +10,10 @@ const router = express.Router();
 
 // Warehouse routes
 router
+  .route("/warehouses/:warehouseId/inventories")
+  .get(warehouseController.getInventory);
+
+router
   .route("/warehouses/:warehouseId")
   .delete(warehouseController.remove)
   .get(warehouseController.findWarehouse)
@@ -22,13 +26,13 @@ router
 
 // Inventory routes
 router
-    .route("/inventories")
-    .get(inventoryController.getAll)
-    .post(inventoryController.addNewItem);
+  .route("/inventories")
+  .get(inventoryController.getAll)
+  .post(inventoryController.addNewItem);
 
 router
-    .route("/inventories/:itemId")
-    .get(inventoryController.getSingleInventory)
-    .put(inventoryController.edit);
+  .route("/inventories/:itemId")
+  .get(inventoryController.getSingleInventory)
+  .put(inventoryController.edit);
 
 export default router;
