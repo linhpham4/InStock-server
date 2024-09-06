@@ -148,4 +148,3 @@ const addNewItem = async (req, res) => {
 }
 
 export { getAll, getSingleInventory, edit, removeSingleInventory, addNewItem};
->>>>>>> develop
