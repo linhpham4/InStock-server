@@ -8,19 +8,17 @@ import * as inventoryController from "../controllers/inventory-controller.js";
 
 const router = express.Router();
 
-
 // Warehouse routes
 router
-    .route("/warehouses/:warehouseId")
-    .delete(warehouseController.remove)
-    .get(warehouseController.findWarehouse)
-    .patch(warehouseController.update);
-
+  .route("/warehouses/:warehouseId")
+  .delete(warehouseController.remove)
+  .get(warehouseController.findWarehouse)
+  .patch(warehouseController.update);
 
 router
-    .route('/warehouses')
-    .get(warehouseController.getWarehouses)
-    .post(warehouseController.addNew);
+  .route("/warehouses")
+  .get(warehouseController.getWarehouses)
+  .post(warehouseController.addNew);
 
 // Inventory routes
 router
@@ -28,5 +26,6 @@ router
     .get(inventoryController.getAll)
     .post(inventoryController.addNewItem);
 
+router.route("/inventories/:itemId").put(inventoryController.edit);
 
 export default router;

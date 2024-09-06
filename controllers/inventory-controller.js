@@ -26,6 +26,35 @@ const getAll = async (req, res) => {
   }
 };
 
+const edit = async (req, res) => {
+  const id = req.params.itemId;
+  const request = req.body;
+  try {
+    if (
+      request.id &&
+      request.warehouse_id &&
+      request.item_name &&
+      request.description &&
+      request.category &&
+      request.status &&
+      request.quantity
+    ) {
+      await knex("inventories").where({ id }).update(req.body);
+      const updatedInventory = await knex("inventories").where({ id });
+      res.status(200).json(updatedInventory);
+    } else {
+      res
+        .status(500)
+        .json(
+          "Bad request. All edit requests must have all keys with non-empty values"
+        );
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(404).json("Not found");
+  }
+};
+
 // Create new inventory item
 const addNewItem = async (req, res) => {
   try {
@@ -65,4 +94,4 @@ const addNewItem = async (req, res) => {
   }
 }
 
-export { getAll, addNewItem };
+export { getAll, edit, addNewItem };
