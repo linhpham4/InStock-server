@@ -26,6 +26,9 @@ router
     .get(inventoryController.getAll)
     .post(inventoryController.addNewItem);
 
-router.route("/inventories/:itemId").put(inventoryController.edit);
+router
+    .route("/inventories/:itemId")
+    .get(inventoryController.getSingleInventory)
+    .put(inventoryController.edit);
 
 export default router;
