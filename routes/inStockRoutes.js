@@ -26,6 +26,7 @@ router
 router
     .route("/inventories")
     .get(inventoryController.getAll)
+    .post(inventoryController.addNewItem);
 
 
 export default router;

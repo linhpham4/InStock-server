@@ -26,6 +26,7 @@ const getAll = async (req, res) => {
   }
 };
 
+const addNewItem = async (req, res) => {
+}
 
-
-export { getAll};
+export { getAll, addNewItem };
