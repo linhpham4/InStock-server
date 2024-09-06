@@ -27,6 +27,25 @@ const getAll = async (req, res) => {
 };
 
 const addNewItem = async (req, res) => {
+  try {
+    const updatedInventory = await knex("inventories").insert(req.body);
+    const newItemId = updatedInventory[0];
+    const newItem = await knex("inventories")
+      .where({ id: newItemId })
+      .select(
+        "id",
+        "warehouse_id",
+        "item_name",
+        "description",
+        "category",
+        "status",
+        "quantity"
+      );
+
+    res.status(201).json(newItem[0]);
+  } catch (error) {
+    res.status(500).json(`${error}`);
+  }
 }
 
 export { getAll, addNewItem };
