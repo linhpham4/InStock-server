@@ -59,7 +59,9 @@ const edit = async (req, res) => {
 const addNewItem = async (req, res) => {
   try {
     // checks that request contains all required data
-    if (!req.body.warehouse_id || !req.body.item_name || !req.body.description || !req.body.category || !req.body.status || !req.body.quantity) {
+    ////// !req.body.quantity will not work for cases where quantity is zero (as !0 is truthy)
+    ////// so we need to check if it's undefined
+    if (!req.body.warehouse_id || !req.body.item_name || !req.body.description || !req.body.category || !req.body.status || req.body.quantity === undefined ) {
       return res.status(400).json("Please provide all required item information");
     };
     
