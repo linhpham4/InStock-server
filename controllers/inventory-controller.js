@@ -53,7 +53,7 @@ const getItem = async (req,res) => {
 }
 
 // Get all inventory
-const getAllItem = async (req, res) => {
+const getAllItems = async (_req, res) => {
   try {
     const inventory = await knex("inventories")
       .join("warehouses", "inventories.warehouse_id", "warehouses.id")
@@ -66,9 +66,7 @@ const getAllItem = async (req, res) => {
         "status",
         "quantity"
       );
-    if (inventory.length === 0) {
-      res.status(404).json("Not found");
-    }
+
     res.status(200).json(inventory);
   } catch (error) {
     res.status(500).json(`${error}`);
@@ -147,4 +145,4 @@ const addNewItem = async (req, res) => {
   }
 }
 
-export { getAllItem, getItem, editItem, removeItem, addNewItem};
+export { getAllItems, getItem, editItem, removeItem, addNewItem};
