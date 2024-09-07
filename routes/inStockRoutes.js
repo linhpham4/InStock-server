@@ -13,7 +13,7 @@ router
   .route("/warehouses/:warehouseId")
   .delete(warehouseController.remove)
   .get(warehouseController.findWarehouse)
-  .patch(warehouseController.update);
+  .put(warehouseController.update);
 
 router
   .route("/warehouses")
