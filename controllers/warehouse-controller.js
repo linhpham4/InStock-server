@@ -177,7 +177,6 @@ const update = async (req, res) => {
 //Get inventory for any single warehouse
 const getInventory = async (req, res) => {
   const id = req.params.warehouseId;
-  console.log(id);
   try {
     const inventory = await knex("inventories")
       .join("warehouses", "inventories.warehouse_id", "warehouses.id")
