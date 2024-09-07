@@ -57,12 +57,22 @@ const addNew = async (req, res) => {
   } = req.body;
 
   if (
-    !warehouse_name ||
-    !address ||
-    !city ||
-    !country ||
-    !contact_name ||
-    !contact_position
+    // !warehouse_name ||
+    // !address ||
+    // !city ||
+    // !country ||
+    // !contact_name ||
+    // !contact_position
+
+    isEmpty(warehouse_name) ||
+    isEmpty(address) ||
+    isEmpty(city) ||
+    isEmpty(country) ||
+    isEmpty(contact_name) ||
+    isEmpty(contact_position) ||
+    isEmpty(contact_phone) ||
+    isEmpty(contact_email)
+
   ) {
     return res.status(400).json({ message: "Please fill out all fields" });
   }
