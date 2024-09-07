@@ -1,8 +1,4 @@
 import express from "express";
-import initKnex from "knex";
-import configuration from "../knexfile.js";
-const knex = initKnex(configuration);
-
 import * as warehouseController from "../controllers/warehouse-controller.js";
 import * as inventoryController from "../controllers/inventory-controller.js";
 
