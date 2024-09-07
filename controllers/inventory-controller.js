@@ -16,7 +16,7 @@ const removeSingleInventory = async (req, res) => {
     await knex('inventories')
       .where({ id })
       .del();
-    res.status(200).json(inventoryItem);
+    res.status(204).end()
   } catch (error) {
     console.error(error);
     res.status(500).json(`Bad request. ${error}`);
