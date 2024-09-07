@@ -4,7 +4,7 @@ import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
 
 // Delete an inventory item
-const removeSingleInventory = async (req, res) => {
+const removeItem = async (req, res) => {
   const id = req.params.itemId;
 
   try {
@@ -24,7 +24,7 @@ const removeSingleInventory = async (req, res) => {
 
 
 // Get an inventory item
-const getSingleInventory = async (req,res) => {
+const getItem = async (req,res) => {
 
   try {
       const id  = req.params.itemId
@@ -53,7 +53,7 @@ const getSingleInventory = async (req,res) => {
 }
 
 // Get all inventory
-const getAll = async (req, res) => {
+const getAllItem = async (req, res) => {
   try {
     const inventory = await knex("inventories")
       .join("warehouses", "inventories.warehouse_id", "warehouses.id")
@@ -76,7 +76,7 @@ const getAll = async (req, res) => {
 };
 
 // Edit/update an existing resource in its entirety (PUT)
-const edit = async (req, res) => {
+const editItem = async (req, res) => {
   const id = req.params.itemId;
   const request = req.body;
   try {
@@ -108,7 +108,6 @@ const edit = async (req, res) => {
 
 // Create new inventory item
 const addNewItem = async (req, res) => {
-  const id = req.params.itemId;
   try {
     // checks that request contains all required data
     ////// !req.body.quantity will not work for cases where quantity is zero (as !0 is truthy)
@@ -131,7 +130,7 @@ const addNewItem = async (req, res) => {
     const updatedInventory = await knex("inventories").insert(req.body);
     const newItemId = updatedInventory[0];
     const newItem = await knex("inventories")
-      .where({ id })
+      .where({ id: newItemId })
       .select(
         "id",
         "warehouse_id",
@@ -148,4 +147,4 @@ const addNewItem = async (req, res) => {
   }
 }
 
-export { getAll, getSingleInventory, edit, removeSingleInventory, addNewItem};
+export { getAllItem, getItem, editItem, removeItem, addNewItem};

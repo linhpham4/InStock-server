@@ -5,7 +5,7 @@ import validator from "validator";
 const knex = initKnex(configuration);
 
 // Get all warehouses
-const getWarehouses = async (_req, res) => {
+const getAllWarehouses = async (_req, res) => {
   try {
     const data = await knex
       .select(
@@ -27,7 +27,7 @@ const getWarehouses = async (_req, res) => {
 };
 
 // Delete a warehouse
-const remove = async (req, res) => {
+const removeWarehouse = async (req, res) => {
   const id = req.params.warehouseId;
 
   try {
@@ -43,7 +43,7 @@ const remove = async (req, res) => {
 };
 
 // Add a new warehouse
-const addNew = async (req, res) => {
+const addNewWarehouse = async (req, res) => {
   const {
     warehouse_name,
     address,
@@ -100,7 +100,7 @@ const addNew = async (req, res) => {
 };
 
 // Get a single warehouse
-const findWarehouse = async (req, res) => {
+const getSingleWarehouse = async (req, res) => {
   try {
     const id = req.params.warehouseId;
     const foundWarehouse = await knex("warehouses")
@@ -128,7 +128,7 @@ const findWarehouse = async (req, res) => {
 };
 
 // Update information for a warehouse
-const update = async (req, res) => {
+const editWarehouse = async (req, res) => {
   const {
     warehouse_name,
     address,
@@ -213,4 +213,4 @@ const getInventory = async (req, res) => {
   }
 };
 
-export { remove, addNew, findWarehouse, getWarehouses, update, getInventory };
+export { removeWarehouse, addNewWarehouse, getSingleWarehouse, getAllWarehouses, editWarehouse, getInventory };
