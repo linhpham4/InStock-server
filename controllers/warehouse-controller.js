@@ -121,8 +121,7 @@ const findWarehouse = async (req, res) => {
       return res.status(404).json(`Warehouse with ID ${id} not found`);
     }
 
-    const warehouseData = foundWarehouse[0];
-    res.status(200).json(warehouseData);
+    res.status(200).json(foundWarehouse[0]);
   } catch (error) {
     res.status(500).json(`${error}`);
   }
@@ -141,31 +140,51 @@ const update = async (req, res) => {
     contact_email,
   } = req.body;
 
-  const updateFields = {
-    warehouse_name,
-    address,
-    city,
-    country,
-    contact_name,
-    contact_position,
-    contact_phone,
-    contact_email,
-  };
+  if (
+    !warehouse_name ||
+    !address ||
+    !city ||
+    !country ||
+    !contact_name ||
+    !contact_position ||
+    !contact_phone ||
+    !contact_email 
+  ) {
+    return res.status(400).json("Please provide all required warehouse information");
+  }
+
+  const phoneFormat = /^\s*\+[0-9]\s*\([0-9]{3}\)\s*[0-9]{3}\s*-\s*[0-9]{4}\s*$/;
+  if (!phoneFormat.test(contact_phone)) {
+    return res.status(400).json("Invalid phone number");
+  }
+
+  if (!validator.isEmail(contact_email)) {
+    return res.status(400).json("Invalid email address");
+  }
 
   const id = req.params.warehouseId;
 
   try {
-    const rowsUpdated = await knex("warehouses")
+    await knex("warehouses").where({ id }).update(req.body);
+    const updatedWarehouse = await knex("warehouses")
       .where({ id })
-      .update(updateFields);
-
-    if (rowsUpdated === 0) {
+      .select(
+        "id",
+        "warehouse_name",
+        "address",
+        "city",
+        "country",
+        "contact_name",
+        "contact_position",
+        "contact_phone",
+        "contact_email"
+      );
+    
+    if (updatedWarehouse.length === 0) {
       return res.status(404).json(`Warehouse with ID ${id} not found`);
     }
 
-    const updatedwarehouse = await knex("warehouses").where({ id });
-
-    res.json(updatedwarehouse[0]);
+    res.status(200).json(updatedWarehouse[0]);
   } catch (error) {
     res.status(500).json(`${error}`);
   }
