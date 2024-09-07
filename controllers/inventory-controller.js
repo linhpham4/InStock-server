@@ -3,6 +3,7 @@ import configuration from "../knexfile.js";
 
 const knex = initKnex(configuration);
 
+// Delete an inventory item
 const removeSingleInventory = async (req, res) => {
   const id = req.params.itemId;
 
@@ -18,11 +19,12 @@ const removeSingleInventory = async (req, res) => {
       .del();
     res.status(204).end()
   } catch (error) {
-    console.error(error);
-    res.status(500).json(`Bad request. ${error}`);
+    res.status(500).json(`${error}`);
   }
 };
 
+
+// Get an inventory item
 const getSingleInventory = async (req,res) => {
 
   try {
@@ -48,7 +50,7 @@ const getSingleInventory = async (req,res) => {
       
   res.status(200).json(inventorySingle[0]) 
   } catch (error) {
-      res.status(500).send(`Unable to retrieve data for inventory item with ID ${req.params.itemId}`)
+    res.status(500).json(`${error}`);
   }
 }
 
@@ -71,8 +73,7 @@ const getAll = async (req, res) => {
     }
     res.status(200).json(inventory);
   } catch (error) {
-    console.error(error);
-    res.status(400).json("Bad request");
+    res.status(500).json(`${error}`);
   }
 };
 
@@ -101,8 +102,7 @@ const edit = async (req, res) => {
         );
     }
   } catch (error) {
-    console.error(error);
-    res.status(404).json("Not found");
+    res.status(500).json(`${error}`);
   }
 };
 

@@ -22,7 +22,7 @@ const getWarehouses = async (_req, res) => {
       .from("warehouses");
     res.status(200).json(data);
   } catch (error) {
-    res.status(400).send(`Error retrieving warehouses: ${error}`);
+    res.status(500).json(`${error}`);
   }
 };
 
@@ -39,7 +39,7 @@ const remove = async (req, res) => {
     res.status(204).end()
   } catch (error) {
     console.error(error);
-    res.status(500).json(`Unsuccessful: ${error}`);
+    res.status(500).json(`${error}`);
   }
 };
 
@@ -101,10 +101,7 @@ const addNew = async (req, res) => {
 
     res.status(201).json(newWarehouse);
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: `Unable to create new warehouse: ${error.message}` });
+    res.status(500).json(`${error}`);
   }
 };
 
@@ -178,9 +175,7 @@ const update = async (req, res) => {
 
     res.json(updatedwarehouse[0]);
   } catch (error) {
-    res.status(500).json({
-      message: `Unable to update warehouse with ID ${req.params.warehouseId}: ${error}`,
-    });
+    res.status(500).json(`${error}`);
   }
 };
 
@@ -203,7 +198,7 @@ const getInventory = async (req, res) => {
     }
     res.status(200).json(inventory);
   } catch (error) {
-    console.error(error);
+    res.status(500).json(`${error}`);
   }
 };
 
