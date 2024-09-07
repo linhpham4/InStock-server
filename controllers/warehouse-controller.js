@@ -5,7 +5,7 @@ import validator from "validator";
 const knex = initKnex(configuration);
 
 // Get all warehouses
-const getWarehouses = async (_req, res) => {
+const getAllWarehouses = async (_req, res) => {
   try {
     const data = await knex
       .select(
@@ -22,29 +22,28 @@ const getWarehouses = async (_req, res) => {
       .from("warehouses");
     res.status(200).json(data);
   } catch (error) {
-    res.status(400).send(`Error retrieving warehouses: ${error}`);
+    res.status(500).json(`${error}`);
   }
 };
 
 // Delete a warehouse
-const remove = async (req, res) => {
+const removeWarehouse = async (req, res) => {
   const id = req.params.warehouseId;
 
   try {
     const warehouseDeleted = await knex("warehouses").where({ id });
     if (warehouseDeleted.length === 0) {
-      res.status(404).json("Warehouse not found");
+      return res.status(404).json(`Warehouse with ID ${id} not found`);
     }
     await knex("warehouses").where({ id }).del();
     res.status(204).end()
   } catch (error) {
-    console.error(error);
-    res.status(500).json(`Unsuccessful: ${error}`);
+    res.status(500).json(`${error}`);
   }
 };
 
 // Add a new warehouse
-const addNew = async (req, res) => {
+const addNewWarehouse = async (req, res) => {
   const {
     warehouse_name,
     address,
@@ -57,59 +56,51 @@ const addNew = async (req, res) => {
   } = req.body;
 
   if (
-    // !warehouse_name ||
-    // !address ||
-    // !city ||
-    // !country ||
-    // !contact_name ||
-    // !contact_position
-
-    isEmpty(warehouse_name) ||
-    isEmpty(address) ||
-    isEmpty(city) ||
-    isEmpty(country) ||
-    isEmpty(contact_name) ||
-    isEmpty(contact_position) ||
-    isEmpty(contact_phone) ||
-    isEmpty(contact_email)
-
+    !warehouse_name ||
+    !address ||
+    !city ||
+    !country ||
+    !contact_name ||
+    !contact_position ||
+    !contact_phone ||
+    !contact_email 
   ) {
-    return res.status(400).json({ message: "Please fill out all fields" });
+    return res.status(400).json("Please provide all required warehouse information");
   }
 
-  if (!validator.isMobilePhone(contact_phone, "any", { strictMode: false })) {
-    return res.status(400).json({ message: "Invalid phone number" });
+  const phoneFormat = /^\s*\+[0-9]\s*\([0-9]{3}\)\s*[0-9]{3}\s*-\s*[0-9]{4}\s*$/;
+  if (!phoneFormat.test(contact_phone)) {
+    return res.status(400).json("Invalid phone number");
   }
 
   if (!validator.isEmail(contact_email)) {
-    return res.status(400).json({ message: "Invalid email address" });
+    return res.status(400).json("Invalid email address");
   }
 
   try {
-    const [newWarehouse] = await knex("warehouses")
-      .insert({
-        warehouse_name,
-        address,
-        city,
-        country,
-        contact_name,
-        contact_position,
-        contact_phone,
-        contact_email,
-      })
-      .returning("*");
-
-    res.status(201).json(newWarehouse);
+    const updatedWarehouses = await knex("warehouses").insert(req.body);
+    const newWarehouseId = updatedWarehouses[0];
+    const newWarehouse = await knex("warehouses")
+      .where({ id: newWarehouseId })
+      .select(
+        "id",
+        "warehouse_name",
+        "address",
+        "city",
+        "country",
+        "contact_name",
+        "contact_position",
+        "contact_phone",
+        "contact_email"
+      );
+    res.status(201).json(newWarehouse[0]);
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: `Unable to create new warehouse: ${error.message}` });
+    res.status(500).json(`${error}`);
   }
 };
 
 // Get a single warehouse
-const findWarehouse = async (req, res) => {
+const getSingleWarehouse = async (req, res) => {
   try {
     const id = req.params.warehouseId;
     const foundWarehouse = await knex("warehouses")
@@ -130,15 +121,14 @@ const findWarehouse = async (req, res) => {
       return res.status(404).json(`Warehouse with ID ${id} not found`);
     }
 
-    const warehouseData = foundWarehouse[0];
-    res.status(200).json(warehouseData);
+    res.status(200).json(foundWarehouse[0]);
   } catch (error) {
     res.status(500).json(`${error}`);
   }
 };
 
 // Update information for a warehouse
-const update = async (req, res) => {
+const editWarehouse = async (req, res) => {
   const {
     warehouse_name,
     address,
@@ -150,37 +140,53 @@ const update = async (req, res) => {
     contact_email,
   } = req.body;
 
-  const updateFields = {
-    warehouse_name,
-    address,
-    city,
-    country,
-    contact_name,
-    contact_position,
-    contact_phone,
-    contact_email,
-  };
+  if (
+    !warehouse_name ||
+    !address ||
+    !city ||
+    !country ||
+    !contact_name ||
+    !contact_position ||
+    !contact_phone ||
+    !contact_email 
+  ) {
+    return res.status(400).json("Please provide all required warehouse information");
+  }
+
+  const phoneFormat = /^\s*\+[0-9]\s*\([0-9]{3}\)\s*[0-9]{3}\s*-\s*[0-9]{4}\s*$/;
+  if (!phoneFormat.test(contact_phone)) {
+    return res.status(400).json("Invalid phone number");
+  }
+
+  if (!validator.isEmail(contact_email)) {
+    return res.status(400).json("Invalid email address");
+  }
+
+  const id = req.params.warehouseId;
 
   try {
-    const rowsUpdated = await knex("warehouses")
-      .where({ id: req.params.warehouseId })
-      .update(updateFields);
-
-    if (rowsUpdated === 0) {
-      return res.status(404).json({
-        message: `warehouse with ID ${req.params.warehouseId} not found`,
-      });
+    await knex("warehouses").where({ id }).update(req.body);
+    const updatedWarehouse = await knex("warehouses")
+      .where({ id })
+      .select(
+        "id",
+        "warehouse_name",
+        "address",
+        "city",
+        "country",
+        "contact_name",
+        "contact_position",
+        "contact_phone",
+        "contact_email"
+      );
+    
+    if (updatedWarehouse.length === 0) {
+      return res.status(404).json(`Warehouse with ID ${id} not found`);
     }
 
-    const updatedwarehouse = await knex("warehouses").where({
-      id: req.params.warehouseId,
-    });
-
-    res.json(updatedwarehouse[0]);
+    res.status(200).json(updatedWarehouse[0]);
   } catch (error) {
-    res.status(500).json({
-      message: `Unable to update warehouse with ID ${req.params.warehouseId}: ${error}`,
-    });
+    res.status(500).json(`${error}`);
   }
 };
 
@@ -199,12 +205,12 @@ const getInventory = async (req, res) => {
         "inventories.quantity"
       );
     if (inventory.length === 0) {
-      res.status(404).json("Warehouse Id not found");
+      return res.status(404).json(`Warehouse with ID ${id} not found`);
     }
     res.status(200).json(inventory);
   } catch (error) {
-    console.error(error);
+    res.status(500).json(`${error}`);
   }
 };
 
-export { remove, addNew, findWarehouse, getWarehouses, update, getInventory };
+export { removeWarehouse, addNewWarehouse, getSingleWarehouse, getAllWarehouses, editWarehouse, getInventory };
