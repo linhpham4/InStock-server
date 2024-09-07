@@ -33,12 +33,11 @@ const remove = async (req, res) => {
   try {
     const warehouseDeleted = await knex("warehouses").where({ id });
     if (warehouseDeleted.length === 0) {
-      res.status(404).json("Warehouse not found");
+      return res.status(404).json(`Warehouse with ID ${id} not found`);
     }
     await knex("warehouses").where({ id }).del();
     res.status(204).end()
   } catch (error) {
-    console.error(error);
     res.status(500).json(`${error}`);
   }
 };
@@ -158,20 +157,18 @@ const update = async (req, res) => {
     contact_email,
   };
 
+  const id = req.params.warehouseId;
+
   try {
     const rowsUpdated = await knex("warehouses")
-      .where({ id: req.params.warehouseId })
+      .where({ id })
       .update(updateFields);
 
     if (rowsUpdated === 0) {
-      return res.status(404).json({
-        message: `warehouse with ID ${req.params.warehouseId} not found`,
-      });
+      return res.status(404).json(`Warehouse with ID ${id} not found`);
     }
 
-    const updatedwarehouse = await knex("warehouses").where({
-      id: req.params.warehouseId,
-    });
+    const updatedwarehouse = await knex("warehouses").where({ id });
 
     res.json(updatedwarehouse[0]);
   } catch (error) {
@@ -194,7 +191,7 @@ const getInventory = async (req, res) => {
         "inventories.quantity"
       );
     if (inventory.length === 0) {
-      res.status(404).json("Warehouse Id not found");
+      return res.status(404).json(`Warehouse with ID ${id} not found`);
     }
     res.status(200).json(inventory);
   } catch (error) {

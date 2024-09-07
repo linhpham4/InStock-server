@@ -11,8 +11,7 @@ const removeSingleInventory = async (req, res) => {
     const inventoryItem = await knex("inventories")
       .where({ id });
     if (inventoryItem.length === 0) {
-      res.status(404).json("Inventory item not found");
-      return;
+      return res.status(404).json(`Item with ID ${id} not found`);
     }
     await knex('inventories')
       .where({ id })
@@ -44,8 +43,7 @@ const getSingleInventory = async (req,res) => {
       )
 
       if (inventorySingle.length === 0) {
-        res.status(404).json("Inventory item not found");
-        return;
+        return res.status(404).json(`Item with ID ${id} not found`);
       }
       
   res.status(200).json(inventorySingle[0]) 
@@ -100,6 +98,8 @@ const edit = async (req, res) => {
         .json(
           "Bad request. All edit requests must have all keys with non-empty values"
         );
+
+        // return res.status(404).json(`Item with ID ${id} not found`);
     }
   } catch (error) {
     res.status(500).json(`${error}`);
@@ -108,6 +108,7 @@ const edit = async (req, res) => {
 
 // Create new inventory item
 const addNewItem = async (req, res) => {
+  const id = req.params.itemId;
   try {
     // checks that request contains all required data
     ////// !req.body.quantity will not work for cases where quantity is zero (as !0 is truthy)
@@ -119,7 +120,7 @@ const addNewItem = async (req, res) => {
     // checks if a warehouse in the warehouses table has an id matching warehouse_id from the request
     const warehouses = await knex("warehouses");
     if (!warehouses.find((warehouse) => warehouse.id === req.body.warehouse_id)) {
-      return res.status(400).json(`Warehouse with ID ${req.body.warehouse_id} cannot be found`);
+      return res.status(400).json(`Warehouse with ID ${req.body.warehouse_id} not found`);
     };
 
     // checks if the value of "quantity" is a number
@@ -130,7 +131,7 @@ const addNewItem = async (req, res) => {
     const updatedInventory = await knex("inventories").insert(req.body);
     const newItemId = updatedInventory[0];
     const newItem = await knex("inventories")
-      .where({ id: newItemId })
+      .where({ id })
       .select(
         "id",
         "warehouse_id",
