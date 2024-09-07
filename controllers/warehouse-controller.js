@@ -56,49 +56,44 @@ const addNew = async (req, res) => {
   } = req.body;
 
   if (
-    // !warehouse_name ||
-    // !address ||
-    // !city ||
-    // !country ||
-    // !contact_name ||
-    // !contact_position
-
-    isEmpty(warehouse_name) ||
-    isEmpty(address) ||
-    isEmpty(city) ||
-    isEmpty(country) ||
-    isEmpty(contact_name) ||
-    isEmpty(contact_position) ||
-    isEmpty(contact_phone) ||
-    isEmpty(contact_email)
-
+    !warehouse_name ||
+    !address ||
+    !city ||
+    !country ||
+    !contact_name ||
+    !contact_position ||
+    !contact_phone ||
+    !contact_email 
   ) {
-    return res.status(400).json({ message: "Please fill out all fields" });
+    return res.status(400).json("Please provide all required warehouse information");
   }
 
-  if (!validator.isMobilePhone(contact_phone, "any", { strictMode: false })) {
-    return res.status(400).json({ message: "Invalid phone number" });
+  const phoneFormat = /^\s*\+[0-9]\s*\([0-9]{3}\)\s*[0-9]{3}\s*-\s*[0-9]{4}\s*$/;
+  if (!phoneFormat.test(contact_phone)) {
+    return res.status(400).json("Invalid phone number");
   }
 
   if (!validator.isEmail(contact_email)) {
-    return res.status(400).json({ message: "Invalid email address" });
+    return res.status(400).json("Invalid email address");
   }
 
   try {
-    const [newWarehouse] = await knex("warehouses")
-      .insert({
-        warehouse_name,
-        address,
-        city,
-        country,
-        contact_name,
-        contact_position,
-        contact_phone,
-        contact_email,
-      })
-      .returning("*");
-
-    res.status(201).json(newWarehouse);
+    const updatedWarehouses = await knex("warehouses").insert(req.body);
+    const newWarehouseId = updatedWarehouses[0];
+    const newWarehouse = await knex("warehouses")
+      .where({ id: newWarehouseId })
+      .select(
+        "id",
+        "warehouse_name",
+        "address",
+        "city",
+        "country",
+        "contact_name",
+        "contact_position",
+        "contact_phone",
+        "contact_email"
+      );
+    res.status(201).json(newWarehouse[0]);
   } catch (error) {
     res.status(500).json(`${error}`);
   }
